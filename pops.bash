@@ -4,6 +4,9 @@
 
 CHECKER=$(stat test.html | grep -i modify | cut -d' ' -f3 | cut -d':' -f1)
 HOUR=$(date +%H)
+if [[ ! -e test.txt ]]; then
+	touch test.txt
+fi
 DAY_CHECKER=$(head -n 1 test.txt)
 
 #checks whether it has been more than an hour or if it has been a new day
@@ -23,7 +26,10 @@ if [[ $CHECKER -lt $HOUR || $DAY_CHECKER != $(date +%D) || ! -e test.html ]]; th
 
 	#if there are no pops 
 	if [[ -z $POP ]]; then 
-		echo "There isn't any pops dude"
+		echo $(date +%D) | tee test.txt
+		echo "There isn't any pops dude" | tee -a test.txt
+		exit 0
+		
 	else
 		#this message indicates that we actually used "wget" command 
 		echo "Refreshed"
@@ -46,12 +52,13 @@ if [[ $CHECKER -lt $HOUR || $DAY_CHECKER != $(date +%D) || ! -e test.html ]]; th
 		fi
 	fi 
 	#launch windows subshell to launch chrome
-	LAUNCH= "$(grep -A 20 "Corresp" test.txt | grep "\s$CHOICE" | cut -d "$CHOICE" -f2| tr -d '[:space:]')" 
+	LAUNCH="$(grep -A 20 "Corresp" test.txt | grep "\s$CHOICE" | cut -d "$CHOICE" -f2| tr -d '[:space:]')" 
 	cmd.exe /C start http://"$(LAUNCH)"
 else 
 	#simply cat out the test file in order to prevent ISP's from getting mad at you etc..
+	
 	cat test.txt
-	if [[ -z $LAUNCH ]]; then 
+	if [[ -z $LAUNCH  ]]; then 
 		exit 0
 	fi
 	
@@ -65,5 +72,5 @@ else
 	fi 
 	
 	#launch windows subshell to launch chrome 
-	cmd.exe /C start http://"$(grep -A 20 "Corresp" test.txt | grep "\s$CHOICE" | cut -d "$CHOICE" -f2| tr -d '[:space:]')" 
+	cmd.exe /C start http://"$(LAUNCH)" 
 fi
