@@ -42,21 +42,26 @@ if [[ $CHECKER -lt $HOUR || $DAY_CHECKER != $(date +%D) || ! -e test.html ]]; th
 		
 		#exit if choice is null or '0'
 		if [[ $CHOICE -eq 0 || -z $CHOICE ]]; then 
-			exit 0;
+			exit 0
 		fi
 	fi 
-	#launch windows subshell to launch chrome 
-		cmd.exe /C start http://"$(grep -A 20 "Corresp" test.txt | grep "\s$CHOICE" | cut -d "$CHOICE" -f2| tr -d '[:space:]')" 
+	#launch windows subshell to launch chrome
+	LAUNCH= "$(grep -A 20 "Corresp" test.txt | grep "\s$CHOICE" | cut -d "$CHOICE" -f2| tr -d '[:space:]')" 
+	cmd.exe /C start http://"$(LAUNCH)"
 else 
 	#simply cat out the test file in order to prevent ISP's from getting mad at you etc..
 	cat test.txt
+	if [[ -z $LAUNCH ]]; then 
+		exit 0
+	fi
+	
 	
 	echo "Which Image/Link would you like to launch (choose a number, 0 to exit):"
 	read -r CHOICE	
 	
 	#exit if choice is null or '0'
 	if [[ $CHOICE -eq 0 || -z $CHOICE ]]; then 
-		exit 0;		
+		exit 0		
 	fi 
 	
 	#launch windows subshell to launch chrome 
