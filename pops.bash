@@ -9,8 +9,8 @@ if [[ ! -e test.txt ]]; then
 fi
 DAY_CHECKER=$(head -n 1 test.txt)
 
-#checks whether it has been more than an hour or if it has been a new day
-if [[ $CHECKER -lt $HOUR || $DAY_CHECKER != $(date +%D) || ! -e test.html ]]; then
+#checks whether it has been more than an hour, if it has been a new day, if the html file doesnt exist, or refresh 
+if [[ $CHECKER -lt $HOUR || $DAY_CHECKER != $(date +%D) || ! -e test.html || $1 == "-r" ]]; then
 	wget -q -O test.html "https://twitter.com/FunkoPopHunters"
 	echo checking	
 
@@ -53,16 +53,18 @@ if [[ $CHECKER -lt $HOUR || $DAY_CHECKER != $(date +%D) || ! -e test.html ]]; th
 	fi 
 	#launch windows subshell to launch chrome
 	LAUNCH="$(grep -A 20 "Corresp" test.txt | grep "\s$CHOICE" | cut -d "$CHOICE" -f2| tr -d '[:space:]')" 
-	cmd.exe /C start http://"$(LAUNCH)"
+
+	cmd.exe /C start http://"$LAUNCH"
 else 
 	#simply cat out the test file in order to prevent ISP's from getting mad at you etc..
-	
+	LAUNCH="$(grep -A 20 "Corresp" test.txt | grep "\s$CHOICE" | cut -d "$CHOICE" -f2| tr -d '[:space:]')" 
+
 	cat test.txt
 	if [[ -z $LAUNCH  ]]; then 
+		
 		exit 0
 	fi
-	
-	
+		
 	echo "Which Image/Link would you like to launch (choose a number, 0 to exit):"
 	read -r CHOICE	
 	
@@ -70,7 +72,8 @@ else
 	if [[ $CHOICE -eq 0 || -z $CHOICE ]]; then 
 		exit 0		
 	fi 
-	
+	 
+
 	#launch windows subshell to launch chrome 
-	cmd.exe /C start http://"$(LAUNCH)" 
+	cmd.exe /C start http://"$LAUNCH" 
 fi
